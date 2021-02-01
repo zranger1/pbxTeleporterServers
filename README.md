@@ -16,4 +16,9 @@ The currently supported hardware/software platforms are:
 This source is for archival and reference only.  You do not need anything from
 this repository to run or build the main [Pixel Teleporter](https://github.com/zranger1/PixelTeleporter) project. 
 
+## Donation
+If this project saves you time and effort, please consider donating to help support further development.  Every donut or cup of coffee helps!  :-)
+
+[![paypal](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/donate/?hosted_button_id=YM9DKUT5V34G8)
+
   
