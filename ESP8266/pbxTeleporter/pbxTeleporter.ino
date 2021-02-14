@@ -36,8 +36,6 @@ Stream* logger;
 // Network setup
 //#define _SSID "SSID"              // Your WiFi SSID goes here.  
 //#define _PASS "WOWGREATPASSWORD"  // Your WiFi password goes here.
-#define _SSID "Telemachus"
-#define _PASS "Crocolisk"
 #define LISTEN_PORT 8081          // UDP port on which pbxTeleporter listens for commands
 #define DATA_OUT_PORT 8082        // UDP port on client to which we send data
 
