@@ -164,9 +164,8 @@ INT_PTR CALLBACK serialDialog(HWND hDlg, UINT message, WPARAM wParam, LPARAM lPa
 			if (readSerialComboBox(hDlg)) {
 				Teleporter.settings.Save();
 				Teleporter.restart();
-				EndDialog(hDlg, LOWORD(wParam));
 			}
-			return (INT_PTR)TRUE;
+			EndDialog(hDlg, LOWORD(wParam));
 		case IDCANCEL:
 			EndDialog(hDlg, FALSE);
 			break;

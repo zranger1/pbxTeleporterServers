@@ -89,6 +89,8 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow) {
 		CW_USEDEFAULT, 0, 640, 400, nullptr, nullptr, hInstance, nullptr);
 	if (!hWnd) { return FALSE; }
 
+	SetTimer(hWnd, IDT_STATUS, 3000, (TIMERPROC) NULL);
+
 	ShowWindow(hWnd, nCmdShow);
 	UpdateWindow(hWnd);
 	return TRUE;
@@ -133,8 +135,16 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
 		break;
 	case WM_PAINT:
 		hdc = BeginPaint(hWnd, &ps);
-		// TODO: Add drawing code
+		UpdateStatusDisplay(hWnd, hdc);
 		EndPaint(hWnd, &ps);
+		break;
+	case WM_TIMER:
+		// Update status display on timer.
+		switch (wParam) {
+		case IDT_STATUS:
+			InvalidateRect(hWnd, NULL, TRUE);
+			UpdateWindow(hWnd);
+		}
 		break;
 	case WM_CLOSE:
 		Teleporter.settings.Save();
@@ -149,6 +159,28 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
 	}
 	return 0;
 }
+
+///////////////////////////////////////////////////////////////////////////////////////////
+// methods for statistics and status display in main window
+//////////////////////////////////////////////////////////////////////////////////////////
+void UpdateStatusDisplay(HWND hwnd, HDC dc) {
+	RECT rc;
+	WCHAR string[256];
+	UINT nPixels;
+
+	nPixels = Teleporter.getPixelsReady();
+	if (nPixels > 0) {
+		StringCbPrintf(string, sizeof(string), L"Connected. Pixel count is: %u", nPixels);
+	}
+	else {
+		StringCbPrintf(string, sizeof(string), L"Not Connected");
+	}
+
+//	if (!GetUpdateRect(hwnd, &rc, FALSE)) return;
+	GetClientRect(hwnd, &rc);
+	DrawText(dc, string, -1, &rc, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
+}
+
 
 ///////////////////////////////////////////////////////////////////////////////////////////
 // pbxSettings methods -- load/save/get/set persistent settings

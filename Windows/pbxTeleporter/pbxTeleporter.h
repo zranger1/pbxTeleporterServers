@@ -22,6 +22,7 @@
 #include <memory.h>
 #include <tchar.h>
 #include <process.h>
+#include <strsafe.h>
 
 #define _WINSOCK_DEPRECATED_NO_WARNINGS
 #include <winsock2.h>
@@ -40,6 +41,8 @@
 #define MAX_SERIAL_PORTS      128
 #define MAX_DEVICE_NAME_LEN       64
 #define INI_NAME L"\\pbxTeleporter.ini"
+
+#define IDT_STATUS 5005
 
  ///////////////////////////////////////////////////////////////////////////////////////////
  // structures imported from pixelblaze expander source
@@ -135,6 +138,9 @@ extern pbxTeleporterData Teleporter;
 INT_PTR CALLBACK About(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
 INT_PTR CALLBACK portsDialog(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
 INT_PTR CALLBACK serialDialog(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
+
+// utility functions
+void UpdateStatusDisplay(HWND hwnd, HDC dc);
 
 #endif /* __pbxteleporter_h__ */
 

@@ -124,6 +124,7 @@ HANDLE serialOpen(LPCWSTR device, DWORD speed) {
     }
 
 // configure device settings
+    params.fBinary = TRUE;
     params.BaudRate = speed;
     params.ByteSize = 8;
     params.StopBits = ONESTOPBIT;
