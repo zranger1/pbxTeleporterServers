@@ -89,9 +89,8 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow) {
 		CW_USEDEFAULT, 0, 640, 400, nullptr, nullptr, hInstance, nullptr);
 	if (!hWnd) { return FALSE; }
 
-	SetTimer(hWnd, IDT_STATUS, 3000, (TIMERPROC) NULL);
-
 	ShowWindow(hWnd, nCmdShow);
+	SetTimer(hWnd, IDT_STATUS, 3000, (TIMERPROC)NULL);
 	UpdateWindow(hWnd);
 	return TRUE;
 }
@@ -167,6 +166,12 @@ void UpdateStatusDisplay(HWND hwnd, HDC dc) {
 	RECT rc;
 	WCHAR string[256];
 	UINT nPixels;
+
+	// if it has been more than 5 seconds or so since we heard from the Pixelblaze,
+	// set things to the disconnected state
+	if (Teleporter.getTimeSinceLastFrame() > DISCONNECT_TIMEOUT) {
+		if (Teleporter.getPixelsReady() > 0) Teleporter.clearAllData();
+	}
 
 	nPixels = Teleporter.getPixelsReady();
 	if (nPixels > 0) {

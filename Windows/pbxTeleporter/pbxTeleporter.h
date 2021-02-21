@@ -41,6 +41,7 @@
 #define MAX_SERIAL_PORTS      128
 #define MAX_DEVICE_NAME_LEN       64
 #define INI_NAME L"\\pbxTeleporter.ini"
+#define DISCONNECT_TIMEOUT 5000
 
 #define IDT_STATUS 5005
 
@@ -116,6 +117,7 @@ public:
     uint8_t* pixel_ptr = NULL;                  // pointer to current location in pixel_buffer
     HANDLE serialHandle = INVALID_HANDLE_VALUE; // handle to active serial device
     HANDLE serialThread = 0;                    // handle to serial listener thread
+    DWORD  frameTimer = 0;                      // watchdog timer for connection
     udpServer* udp = NULL;                      // pointer to udp listener object
 
     pbxSettings settings;                       // stored/default settings
@@ -125,6 +127,9 @@ public:
     UINT getDataReady() { return dataReady; }
     int getPixelsReady() { return (int)dataReady / 3; }
     void resetPixelBuffer() { pixel_ptr = pixel_buffer; }
+    void clearAllData() { resetPixelBuffer();  dataReady = 0; }
+    void updateFrameTimer() { frameTimer = GetTickCount(); }
+    DWORD getTimeSinceLastFrame() { return GetTickCount() - frameTimer; }
 
     void stop() { runFlag = FALSE; }
     BOOL start();

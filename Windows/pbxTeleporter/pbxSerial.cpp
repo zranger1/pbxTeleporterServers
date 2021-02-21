@@ -261,6 +261,7 @@ void doSetChannelAPA102() {
 void doDrawAll() {
     Teleporter.calcDataSize();
     Teleporter.resetPixelBuffer();
+    Teleporter.updateFrameTimer();
 }
 
 // read APA 102 clock data.  
@@ -294,6 +295,8 @@ void destroySerialListener() {
 unsigned __stdcall serialReadThread(LPVOID  arg) {
     PBFrameHeader hdr;
 
+    Teleporter.updateFrameTimer();
+
     // loop forever
     while (Teleporter.runFlag) {
         // read characters 'till we get the magic sequence
@@ -318,7 +321,6 @@ unsigned __stdcall serialReadThread(LPVOID  arg) {
             }
         }
     }
-
     return 0;
 }
 
