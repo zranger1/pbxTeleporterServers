@@ -33,8 +33,9 @@
 #include "pbxSerial.h"
 #include "udpServer.h"
 
+#define MAX_PIXELS     2048
 #define RCV_BITRATE    2000000L           // bits/sec coming from pixelblaze
-#define DEFAULT_MAX_PIXELS 2048           // 2k pixels plus
+#define BUFFER_SIZE    6150               // 2048 pixels plus a little
 #define DEFAULT_LISTEN_PORT   8081        // default UDP ports
 #define DEFAULT_SEND_PORT 8082
 #define MAX_SERIAL_PORTS      128
@@ -95,7 +96,6 @@ public:
     WCHAR bind_ip[16] = { 0 };                           // local ip address for socket bind
     int listenPort = DEFAULT_LISTEN_PORT;
     int sendPort = DEFAULT_SEND_PORT;
-    int maxPixels = DEFAULT_MAX_PIXELS;
 
     BOOL Save(); 
     void Load();
@@ -111,12 +111,9 @@ public:
 //////////////////////////////////////////////////////////////////////////////////////////
 class pbxTeleporterData {
 public:
-    ~pbxTeleporterData();
-
     BOOL runFlag = TRUE;                        // app is running -- set FALSE to shut down
     UINT dataReady = 0;                         // bytes of valid pixel data in the frame buffer
-    UINT buffer_size = 0;                       // size of memory allocated for pixel buffer
-    uint8_t* pixel_buffer = NULL;               // frame buffer holding pixels read from controller
+    uint8_t pixel_buffer[BUFFER_SIZE] = { 0 };  // frame buffer holding pixels read from controller
     uint8_t* pixel_ptr = NULL;                  // pointer to current location in pixel_buffer
     HANDLE serialHandle = INVALID_HANDLE_VALUE; // handle to active serial device
     HANDLE serialThread = 0;                    // handle to serial listener thread
@@ -133,7 +130,6 @@ public:
     void clearAllData() { resetPixelBuffer();  dataReady = 0; }
     void updateFrameTimer() { frameTimer = GetTickCount(); }
     DWORD getTimeSinceLastFrame() { return GetTickCount() - frameTimer; }
-    BOOL createFrameBuffer(int nPixels);
 
     void stop() { runFlag = FALSE; }
     BOOL start();
