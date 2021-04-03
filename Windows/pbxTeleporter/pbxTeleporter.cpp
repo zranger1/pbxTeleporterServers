@@ -12,6 +12,7 @@
  * Distributed under the MIT license
 */
 #include "pbxTeleporter.h"
+#include <new.h>
 
 #define MAX_LOADSTRING 100
 
@@ -228,6 +229,10 @@ BOOL pbxSettings::Save() {
 	_itow(Teleporter.settings.sendPort, tmp, 10);
 	result = WritePrivateProfileStringW(L"settings", L"sendPort", tmp, path);
 
+	// maximum number of pixels
+	_itow(Teleporter.settings.maxPixels, tmp, 10);
+	result = WritePrivateProfileStringW(L"settings", L"maxPixels", tmp, path);
+
 	return result;
 }
 
@@ -263,12 +268,24 @@ void pbxSettings::Load() {
 	_itow(DEFAULT_SEND_PORT, dflt, 10);
 	GetPrivateProfileStringW(L"settings", L"sendPort", dflt, value, MAX_DEVICE_NAME_LEN, path);
 	sendPort = _wtoi(value);
+
+	// maximum number of pixels
+	_itow(DEFAULT_MAX_PIXELS, dflt, 10);
+	GetPrivateProfileStringW(L"settings", L"maxPixels", dflt, value, MAX_DEVICE_NAME_LEN, path);
+	maxPixels = _wtoi(value);
 }
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////
 // pbxTeleporterData methods - operate the serial -> UDP bridge
 //////////////////////////////////////////////////////////////////////////////////////////
+
+pbxTeleporterData::~pbxTeleporterData() {
+  if (pixel_buffer != NULL) {
+	delete[] pixel_buffer;
+	pixel_buffer = NULL;
+  }
+}
 
 // intialize serial and network communication and start processing data
 BOOL pbxTeleporterData::start() {
@@ -310,6 +327,21 @@ BOOL pbxTeleporterData::restart() {
 	stop();
 	Sleep(500);
 	return start();
+}
+
+BOOL pbxTeleporterData::createFrameBuffer(int nPixels) {
+	// allocate enough space for the specified number of pixels,
+	// plus overhead for any channel information we may need later
+	UINT sz = (nPixels * 3) + 256;  
+
+	// if there's an existing buffer, get rid of it
+	if (pixel_buffer != NULL) {
+		delete[] pixel_buffer;
+		pixel_buffer = NULL;
+	}
+
+	pixel_buffer = new (std::nothrow) uint8_t[sz];
+	return (pixel_buffer != NULL);
 }
 
 

@@ -227,7 +227,7 @@ void doSetChannelWS2812() {
     readBytes((uint8_t*)&ch, sizeof(ch));
 
     // read pixel data if available
-    if (ch.pixels && (ch.numElements == 3) && (ch.pixels <= MAX_PIXELS)) {
+    if (ch.pixels && (ch.numElements == 3) && (ch.pixels <= Teleporter.settings.maxPixels)) {
         data_length = ch.pixels * ch.numElements;
         readBytes(Teleporter.pixel_ptr, data_length);
         Teleporter.pixel_ptr += data_length;
@@ -246,7 +246,7 @@ void doSetChannelAPA102() {
     // contains a 3 bit flag and 5 bits of "extra" brightness data.
     // We're gonna discard the "extra" APA bits and put 3-byte RGB
     // data into the output buffer.
-    if (ch.frequency && (ch.pixels <= MAX_PIXELS)) {
+    if (ch.frequency && (ch.pixels <= Teleporter.settings.maxPixels)) {
         for (int i = 0; i < ch.pixels; i++) {
             readOneByte();
             readBytes(Teleporter.pixel_ptr, 3);
