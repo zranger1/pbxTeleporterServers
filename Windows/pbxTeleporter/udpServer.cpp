@@ -111,11 +111,11 @@ void destroyUdpServer(udpServer* udp) {
 	}
 }
 
-// UDP Server thread function. Once data becomes available, does a blocking
-// listen for requests, and forwards the pixel data when it gets one. Net
-// data rate is decoupled from Pixelblaze frame rate, and multiple clients
-// are supported, although you're gonna need a sturdy router for that...
-// TODO - implement protocol for virtual wiring
+// UDP Server thread function. Network data rate is driven by client request and
+// multiple clients are supported.  This thread does a blocking listen for data
+// request packets.  When a request is recieved, it schedules transmisison of the
+// data at the end of the next complete Pixelblaze frame.
+// TODO - implement standard artnet (or something like it) protocol.
 unsigned __stdcall udpThread(LPVOID  arg) {
 	uint8_t incoming_buffer[UDP_INBUFSIZE];
 	int res;
@@ -125,7 +125,8 @@ unsigned __stdcall udpThread(LPVOID  arg) {
 			res = udpServerListen(Teleporter.udp,(char *) incoming_buffer, UDP_INBUFSIZE);
 
 			if (res > 0) {
-				udpServerSend(Teleporter.udp,(char *) Teleporter.pixel_buffer, Teleporter.getDataReady());
+				Teleporter.setClientRequestFlag(TRUE);
+				//udpServerSend(Teleporter.udp,(char *) Teleporter.pixel_buffer, Teleporter.getDataReady());
 			}
 		}
 	}

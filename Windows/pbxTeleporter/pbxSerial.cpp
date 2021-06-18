@@ -262,6 +262,7 @@ void doDrawAll() {
     Teleporter.calcDataSize();
     Teleporter.resetPixelBuffer();
     Teleporter.updateFrameTimer();
+    Teleporter.sendPixelData();
 }
 
 // read APA 102 clock data.  

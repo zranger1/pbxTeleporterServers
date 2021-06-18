@@ -270,6 +270,19 @@ void pbxSettings::Load() {
 // pbxTeleporterData methods - operate the serial -> UDP bridge
 //////////////////////////////////////////////////////////////////////////////////////////
 
+// (blocking) send a complete frame of pixel data to the client if
+// a request is active, then reset the request flag.  Meant to be
+// called from the serial port thread when it recieves a complete
+// frame from the Pixelblaze.
+int pbxTeleporterData::sendPixelData() {
+	int result = 0; 
+	if (getClientRequestFlag()) {
+		result = udpServerSend(udp, (char*)pixel_buffer, getDataReady());
+		setClientRequestFlag(FALSE);
+	}
+	return result;
+}
+
 // intialize serial and network communication and start processing data
 BOOL pbxTeleporterData::start() {
 	Teleporter.settings.Load();

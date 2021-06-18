@@ -129,7 +129,10 @@ public:
     void resetPixelBuffer() { pixel_ptr = pixel_buffer; }
     void clearAllData() { resetPixelBuffer();  dataReady = 0; }
     void updateFrameTimer() { frameTimer = GetTickCount(); }
+    void setClientRequestFlag(BOOL f) { udp->clientRequestFlag = f; }
+    BOOL getClientRequestFlag() { return udp->clientRequestFlag;  }
     DWORD getTimeSinceLastFrame() { return GetTickCount() - frameTimer; }
+    int sendPixelData(); 
 
     void stop() { runFlag = FALSE; }
     BOOL start();

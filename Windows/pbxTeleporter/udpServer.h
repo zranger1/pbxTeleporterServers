@@ -22,6 +22,7 @@ typedef struct _udpServer {
 	struct sockaddr_in client = { 0 };
 	int clientlen = sizeof(struct sockaddr_in);
     HANDLE pt = INVALID_HANDLE_VALUE; 
+	BOOL clientRequestFlag = FALSE;
 } udpServer;
 
 // void _debugPrintAddress(struct sockaddr_in* addr);
