@@ -9,7 +9,7 @@
  * https://github.com/simap/pixelblaze_output_expander
  *
  * Part of the PixelTeleporter project
- * 2020 by JEM (ZRanger1)
+ * 2021 by JEM (ZRanger1)
  * Distributed under the MIT license
 */
 #include <stdio.h>
@@ -36,6 +36,7 @@ uint8_t pixel_buffer[BUFFER_SIZE];      // per-pixel RGB data for current frame
 uint8_t *pixel_ptr;                     // current write position in buffer
 uint16_t pixelsReady;                   // number of pixels if frame is ready, 0 otherwise
 int runFlag;                            // run status - 1 = keep running, 0 = shutdown
+int clientRequestFlag = 0;              // non-zero indicates pending request from client
 
 /////////////////////////////////
 // Utility Functions
@@ -134,10 +135,14 @@ void doSetChannelAPA102() {
 }
 
 // draw all pixels on all channels using current data
-// flags the frame as available to the network transport.
+// and transmits the current frame if there's a pending client request
 void doDrawAll() {
 	pixelsReady = (pixel_ptr - pixel_buffer);
 	pixel_ptr = pixel_buffer;
+    if (clientRequestFlag) {
+      udpServerSend(udp,pixel_buffer,pixelsReady);
+      clientRequestFlag = 0;
+    }
 }
 
 // read APA 102 clock data.  
@@ -166,6 +171,7 @@ bool setup(int argc, char *argv[]) {
 
 // initialize and enable the main loop
 	runFlag = 1;
+    clientRequestFlag = 0;
 	pixelsReady = 0;
 	pixel_ptr = pixel_buffer;
 
@@ -178,7 +184,7 @@ bool setup(int argc, char *argv[]) {
 // parse cli arguments.
 	argp_parse(&argparser, argc, argv, 0, 0, &arguments);
 
-	printf("pbxTeleporter v1.0.0 for Linux/Raspberry Pi\n");
+	printf("pbxTeleporter v1.1.4 for Linux/Raspberry Pi\n");
 	printf("    Serial Device: %s\n", arguments.serial_port);
 	printf("    IP Address:    %s\n", (0 == strlen(arguments.bind_ip) ? "All" : arguments.bind_ip));
 	printf("    Listen Port:   %i", arguments.listen_port);

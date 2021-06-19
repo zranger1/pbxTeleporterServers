@@ -9,7 +9,7 @@
  * https://github.com/simap/pixelblaze_output_expander
  *
  * Part of the PixelTeleporter project
- * 2020 by JEM (ZRanger1)
+ * 2020-2021 by JEM (ZRanger1)
  * Distributed under the MIT license
 */
 #include <stdio.h>
@@ -20,10 +20,10 @@
 #include "cmdline.h"
 
 // title and version
-const char *argp_program_version = "pbxTeleporter v1.1.3 for Linux/Pi";
+const char *argp_program_version = "pbxTeleporter v1.1.4 for Linux/Pi";
 
 // --help documentation
-static char doc[] = "\npbxTeleporter bridge v1.1.3\n"
+static char doc[] = "\npbxTeleporter bridge v1.1.4\n"
 		"Makes LED controller output available via UDP\n"
 		"This version works exclusively with the Pixelblaze controller.\n";
 

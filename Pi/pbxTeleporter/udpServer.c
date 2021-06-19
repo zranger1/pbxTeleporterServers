@@ -109,10 +109,10 @@ void destroyUdpServer(udpServer *udp) {
 }
 
 // UDP Server thread function. Once data becomes available, does a blocking
-// listen for requests, and forwards the pixel data when it gets one. Net
-// data rate is decoupled from Pixelblaze frame rate, and multiple clients
-// are supported, although you're gonna need a sturdy router for that...
-// TODO - implement protocol for virtual wiring
+// listen for requests, and requests a send operation on the next complete
+// frame received from the Pixelblaze.
+// TODO -  SCHEDULING!  We technically support multiple clients but do not queue 
+// client requests and thus may lose requests if several come in simultaneously.
 void *udpThread(void *arg) {
 	uint8_t incoming_buffer[UDP_INBUFSIZE];
 	udpServer *udp = (udpServer *) arg;
@@ -125,7 +125,8 @@ void *udpThread(void *arg) {
 			res = udpServerListen(udp,incoming_buffer,UDP_INBUFSIZE);
 
 			if (res > 0) {
-				udpServerSend(udp,pixel_buffer,pixelsReady);
+                clientRequestFlag = 1;
+//				udpServerSend(udp,pixel_buffer,pixelsReady);
 			}
 		}
 	}

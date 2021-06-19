@@ -63,6 +63,7 @@ typedef struct {
 
 // global variables
 extern int runFlag;
+extern int clientRequestFlag;
 extern uint16_t pixelsReady;
 extern uint8_t pixel_buffer[];
 
